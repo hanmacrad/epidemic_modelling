@@ -2,7 +2,7 @@
 
 #Parameters
 num_days = 30
-r0 = 2.5
+r0 = 2.2
 shape_gamma = 6
 scale_gamma = 1
 
@@ -18,7 +18,13 @@ simulate_branching = function(num_days, r0, shape_gamma, scale_gamma) {
     for (t_inf in 1:length(vec_infecteds)) { #Loop through each past time index
       
       for (i in 1:vec_infecteds[t_inf]) { #Get infectiousness of each individual at each tinf
-        num_new_infecteds = num_new_infecteds + round(rpois(1, r0) * dgamma(t - t_inf, shape = shape_gamma, scale = scale_gamma))
+        
+        #Infectiousness (Discrete gamma)
+        ti2 = t - t_inf
+        ti1 = ti2 - 1
+        prob_infect = pgamma(ti2, shape = shape_gamma, scale = scale_gamma) - pgamma(ti1, shape = shape_gamma, scale = scale_gamma)
+        
+        num_new_infecteds = num_new_infecteds + rpois(1, r0 * prob_infect)
       }
     }
     vec_infecteds[t] = num_new_infecteds
@@ -38,6 +44,8 @@ plot.ts(cum_data)
 
 #Rough work
 #Inspect gamma density
-x = seq(0.0, 10, by = 1)
-y = dgamma(x = x, shape = 6, scale = 1)
-plot(x, y)
+a = seq(0.0, 10, by = 1)
+b = pgamma(a, shape = 6, scale = 1)
+plot(a, b)
+
+pgamma(8, shape = 6, scale = 1) - pgamma(6, shape = 6, scale = 1)
