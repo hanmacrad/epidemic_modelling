@@ -1,8 +1,8 @@
 #Simulate Branching Process
 
 #Parameters
-num_days = 30
-r0 = 2.1
+num_days = 60
+r0 = 4.3
 shape_gamma = 6
 scale_gamma = 1
 
@@ -18,8 +18,9 @@ simulate_branching = function(num_days, r0, shape_gamma, scale_gamma) {
   
   for (t in 2:num_days) {
     
-    #New infections
-    vec_infecteds[t] = sum(rpois(sum(vec_infecteds), r0*sum(prob_infect[1:t])))
+    #Total rate
+    tot_rate = r0*sum(vec_infecteds*rev(prob_infect[1:t-1]))
+    vec_infecteds[t] = rpois(1, tot_rate)
   }
   
   vec_infecteds
