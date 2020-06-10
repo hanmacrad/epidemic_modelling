@@ -40,10 +40,34 @@ plot.ts(x, ylab = "N Daily infections")
 cum_data <- cumsum(x)
 plot.ts(cum_data)
 
-#Inspect gamma density
-a = seq(0.0, 10, by = 1)
-b = dgamma(a, shape = 1.5, scale = 2)
-plot(a, b)
+
+#*******************************************
+#**Maximum Likelihood Estimation
+poi_log_like <- function(r0, y){
+  
+  #Params
+  num_days = 30
+  shape_gamma = 6
+  scale_gamma = 1
+  
+  #Infectiousness (Discrete gamma)
+  prob_infect = pgamma(c(1:num_days), shape = shape_gamma, scale = scale_gamma) - pgamma(c(0:(num_days-1)), shape = shape_gamma, scale = scale_gamma)
+  logl = 0
+  
+  for (t in 2:num_days) {
+    
+    lambda = r0*sum(y[1:t-1]*rev(prob_infect[1:t-1]))
+    logl = logl + y[t]*log(lambda) - num_days*lambda
+    
+  }
+  
+  logl
+  
+}
+
+##Optim
+optim(starting_values, log_likelihood, y = x)
+
 
 #*********************************************************************
 #Plots
@@ -68,3 +92,8 @@ list_r0 = c(0.5, 1, 2, 4, 8)
 list_shape_scale = list(list(2,2), list(3,2), list(1.5, 2))
 plot_variations(list_r0,  list_shape_scale, num_days)
 
+#**********
+#Inspect gamma density
+a = seq(0.0, 10, by = 1)
+b = dgamma(a, shape = 1.5, scale = 2)
+plot(a, b)
