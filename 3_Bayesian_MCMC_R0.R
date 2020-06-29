@@ -64,7 +64,7 @@ MetropolisHastings_r0 <- function(n, sigma_opt) {
   
   #MCMC chain
   for(i in 2:n) {
-    Y <- r0_vec[i-1] + rnorm(1) #, mean = 0, sd = sigma_opt)
+    Y <- r0_vec[i-1] + rnorm(1, sd = sigma_opt) #, mean = 0, sd = sigma_opt)
     #if(Y < 0){
       #Y = abs(Y)
     #}
@@ -81,7 +81,7 @@ MetropolisHastings_r0 <- function(n, sigma_opt) {
 
 #Target
 n = 10000
-sigma_opt = 2.38 #optimal
+sigma_opt = 1 #2.38 #optimal
 r0_mcmc = MetropolisHastings_r0(n, sigma_opt)
 
 #Plot
